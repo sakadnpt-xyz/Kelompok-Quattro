@@ -45,3 +45,98 @@
   }
   moveTo(current);
 })();
+
+// Background music: tombol play/pause, ingat status dan posisi lagu antar halaman
+(function () {
+  var SRC = "bgm.mp3"; // taruh file lagu dengan nama ini di folder yang sama
+  var TITLE = "A Sorrowful Reunion - Reality Club";
+  var VOLUME = 0.4;
+
+  var audio = new Audio(SRC);
+  audio.loop = true;
+  audio.volume = VOLUME;
+  audio.preload = "auto";
+
+  function read(key) {
+    try { return sessionStorage.getItem(key); } catch (e) { return null; }
+  }
+  function write(key, value) {
+    try { sessionStorage.setItem(key, value); } catch (e) {}
+  }
+
+  var btn = document.createElement("button");
+  btn.type = "button";
+  btn.className = "bgm-toggle";
+  btn.setAttribute("aria-pressed", "false");
+  btn.setAttribute("aria-label", "Putar musik latar: " + TITLE);
+  btn.innerHTML =
+    '<span class="bgm-eq" aria-hidden="true"><i></i><i></i><i></i></span>' +
+    '<span class="bgm-label"></span>';
+  var label = btn.querySelector(".bgm-label");
+  label.textContent = TITLE;
+  document.body.appendChild(btn);
+
+  function setUi(playing) {
+    btn.classList.toggle("is-playing", playing);
+    btn.setAttribute("aria-pressed", playing ? "true" : "false");
+    btn.setAttribute("aria-label", (playing ? "Jeda musik latar: " : "Putar musik latar: ") + TITLE);
+  }
+
+  function play() {
+    var p = audio.play();
+    if (p && p.then) {
+      return p.then(function () {
+        write("bgm-on", "1");
+        setUi(true);
+        return true;
+      }).catch(function () {
+        setUi(false);
+        return false;
+      });
+    }
+    write("bgm-on", "1");
+    setUi(true);
+    return Promise.resolve(true);
+  }
+
+  function pause() {
+    audio.pause();
+    write("bgm-on", "0");
+    setUi(false);
+  }
+
+  btn.addEventListener("click", function () {
+    if (audio.paused) play(); else pause();
+  });
+
+  audio.addEventListener("error", function () {
+    setUi(false);
+    label.textContent = "File bgm.mp3 belum ada di folder";
+  });
+
+  // lanjut dari posisi terakhir di halaman sebelumnya
+  var saved = parseFloat(read("bgm-time"));
+  if (!isNaN(saved)) {
+    audio.addEventListener("loadedmetadata", function () {
+      if (saved < audio.duration) audio.currentTime = saved;
+    }, { once: true });
+  }
+
+  window.addEventListener("pagehide", function () {
+    write("bgm-time", String(audio.currentTime || 0));
+  });
+
+  // browser memblokir autoplay: kalau tadi musik nyala, lanjutkan di interaksi pertama
+  if (read("bgm-on") === "1") {
+    play().then(function (ok) {
+      if (ok) return;
+      function resume() {
+        document.removeEventListener("pointerdown", resume);
+        document.removeEventListener("keydown", resume);
+        if (read("bgm-on") === "1" && audio.paused) play();
+      }
+      document.addEventListener("pointerdown", resume);
+      document.addEventListener("keydown", resume);
+    });
+  }
+})();
