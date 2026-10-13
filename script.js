@@ -48,7 +48,7 @@
 
 // Background music: tombol play/pause, ingat status dan posisi lagu antar halaman
 (function () {
-  var SRC = "bgm.mp3"; // taruh file lagu dengan nama ini di folder yang sama
+  var SRC = "Reality_Club_-_A_Sorrowful_Reunion_(mp3.pm).mp3"; // taruh file lagu dengan nama ini di folder yang sama
   var TITLE = "A Sorrowful Reunion - Reality Club";
   var VOLUME = 0.4;
 
