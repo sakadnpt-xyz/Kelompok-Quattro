@@ -492,12 +492,111 @@ h3 {
   color: var(--ivory-dim);
 }
 
-/* ---------- Footer ---------- */
-.site-footer {
-  padding: 40px 20px 56px;
-  text-align: center;
+/* ---------- Dev bar ---------- */
+body {
+  padding-bottom: 56px;
+}
+
+.dev-bar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 45;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 11px clamp(14px, 4vw, 28px);
+  font-size: 0.85rem;
+  line-height: 1.3;
   color: var(--ivory-dim);
-  font-size: 0.92rem;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.14), rgba(255, 255, 255, 0.04));
+  border-top: 1px solid var(--glass-border);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35), 0 -8px 24px rgba(0, 0, 0, 0.3);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  backdrop-filter: blur(20px) saturate(180%);
+}
+
+.dev-bar-name {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: var(--brass-soft);
+}
+
+/* ---------- Music toggle ---------- */
+.bgm-toggle {
+  position: fixed;
+  right: 16px;
+  bottom: 70px;
+  z-index: 46;
+  display: flex;
+  align-items: center;
+  gap: 0;
+  height: 48px;
+  padding: 0 15px;
+  border-radius: 999px;
+  color: #fff;
+  font: inherit;
+  font-size: 0.88rem;
+  cursor: pointer;
+  background: var(--glass-fill);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow);
+  -webkit-backdrop-filter: blur(20px) saturate(190%);
+  backdrop-filter: blur(20px) saturate(190%);
+  transition: gap 0.35s ease, padding 0.35s ease;
+}
+
+.bgm-label {
+  max-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  transition: max-width 0.45s ease;
+}
+
+.bgm-toggle:hover,
+.bgm-toggle:focus-visible {
+  gap: 10px;
+  padding: 0 18px 0 15px;
+}
+
+.bgm-toggle:hover .bgm-label,
+.bgm-toggle:focus-visible .bgm-label {
+  max-width: 260px;
+}
+
+.bgm-eq {
+  display: flex;
+  align-items: flex-end;
+  gap: 3px;
+  width: 18px;
+  height: 18px;
+}
+
+.bgm-eq i {
+  flex: 1;
+  height: 30%;
+  border-radius: 2px;
+  background: var(--brass-soft);
+}
+
+.bgm-toggle.is-playing .bgm-eq i {
+  animation: eq 0.9s ease-in-out infinite;
+}
+
+.bgm-toggle.is-playing .bgm-eq i:nth-child(2) {
+  animation-delay: -0.3s;
+}
+
+.bgm-toggle.is-playing .bgm-eq i:nth-child(3) {
+  animation-delay: -0.6s;
+}
+
+@keyframes eq {
+  0%, 100% { height: 25%; }
+  50% { height: 100%; }
 }
 
 /* ---------- Responsive + motion ---------- */
@@ -509,6 +608,15 @@ h3 {
 
   .glass-card {
     padding: 24px;
+  }
+
+  .dev-bar {
+    font-size: 0.76rem;
+    gap: 8px;
+  }
+
+  .dev-bar-name {
+    font-size: 0.82rem;
   }
 }
 
@@ -524,5 +632,10 @@ h3 {
   .nav-indicator,
   .ticket {
     transition: none;
+  }
+
+  .bgm-toggle.is-playing .bgm-eq i {
+    animation: none;
+    height: 70%;
   }
 }
